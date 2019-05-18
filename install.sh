@@ -31,7 +31,7 @@ PROPFILE=false
 POSTFSDATA=false
 
 # Set to true if you need late_start service script
-LATESTARTSERVICE=true
+LATESTARTSERVICE=false
 
 ##########################################################################################
 # Replace list
@@ -286,11 +286,15 @@ on_install() {
   pm install $TMPDIR/v4a.apk >/dev/null 2>&1
   $ENFORCE && setenforce 1
   
+  # Install temporary service script
+  cp -f $TMPDIR/service.sh $NVBASE/service.d/v4afx.sh
+  
   # Convert old profiles to new presets
   profile_convert
   
   ui_print " "
-  ui_print "- Copying original V4A vdcs to DDC-Orig..." 
+  ui_print "- Copying original V4A vdcs to:"
+  ui_print "  $FOL/DDC-Orig..." 
   ui_print "   Copy the ones you want to the DDC folder"
   ui_print " "
   ui_print "   Note that some of these aren't that great"
