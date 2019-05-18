@@ -130,11 +130,10 @@ print_modname() {
 profile_convert() {
   ui_print " "
   ui_print "- Converting old profiles to new format..."
-  FOL=/storage/emulated/0/ViPER4Android
-  [ -d $FOL ] || FOL=$(find /storage -type d -name "ViPER4Android" 2>/dev/null | head -n1)
-  [ -d $FOL ] || FOL=$(find /data/media -type d -name "ViPER4Android" 2>/dev/null | head -n1)
-  [ -d $FOL ] || FOL=$(find /sdcard -type d -name "ViPER4Android" 2>/dev/null | head -n1)
-  mkdir $FOL 2>/dev/null
+  [ -d /storage/emulated/0/ViPER4Android ] && FOL=/storage/emulated/0/ViPER4Android || FOL=$(find /storage -type d -name "ViPER4Android" 2>/dev/null | head -n1)
+  [ -z $FOL ] && FOL=$(find /data/media -type d -name "ViPER4Android" 2>/dev/null | head -n1)
+  [ -z $FOL ] && FOL=$(find /sdcard -type d -name "ViPER4Android" 2>/dev/null | head -n1)
+  [ -z $FOL ] && FOL=/storage/emulated/0/ViPER4Android
   [ "$(ls -A $FOL/Profile 2>/dev/null)" ] || { ui_print "- No old profiles found, nothing to convert"; return; }
   
   ui_print "   ViPER4Android folder detected at: $FOL!"
@@ -142,7 +141,7 @@ profile_convert() {
   ui_print " "
   
   [ "$(ls -A $FOL/Profile 2>/dev/null)" ] || { ui_print "No profiles detected!"; exit 1; }
-  mkdir $FOL/Preset 2>/dev/null
+  mkdir -p $FOL/Preset 2>/dev/null
   . $TMPDIR/keys.sh
 
   find $FOL/Profile -mindepth 1 -maxdepth 1 -type d 2>/dev/null | while read PROFILE; do
@@ -160,12 +159,12 @@ profile_convert() {
           DEST="$(echo "$DEST" | sed "s|-$DEVICE|-$DEVICE-Legacy|")"
           [ -f "$SOURCE" ] || continue
           [ -d "$(dirname "$DEST")" ] && { ui_print "     New $(basename $DEVICE) preset already exists! Skipping..."; continue; }
-          [ "$(head -n1 $SOURCE)" == "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>" ] || { ui_print "     $(basename "$PROFILE") $(basename $DEVICE) profile bugged! Skipping!"; continue; }
+          [ "$(head -n1 "$SOURCE")" == "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>" ] || { ui_print "     $(basename "$PROFILE") $(basename $DEVICE) profile bugged! Skipping!"; continue; }
         else
           SOURCE="$PROFILE/$DEVICE.txt"
           [ -f "$SOURCE" ] || continue
           [ -d "$(dirname "$DEST")" ] && { ui_print "     New $(basename $DEVICE) preset already exists! Skipping..."; continue; }
-          [ "$(head -n1 $SOURCE)" == "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>" ] && { ui_print "     $(basename "$PROFILE") $(basename $DEVICE) profile bugged! Skipping!"; continue; }
+          [ "$(head -n1 "$SOURCE")" == "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>" ] && { ui_print "     $(basename "$PROFILE") $(basename $DEVICE) profile bugged! Skipping!"; continue; }
         fi
         [ "$FORMAT" == "xml" ] && ui_print "     Creating new $DEVICE-legacy profile..." || ui_print "     Creating new $DEVICE profile..."
         mkdir "$(dirname "$DEST")" 2>/dev/null
@@ -302,7 +301,8 @@ on_install() {
   ui_print "   Check out here for better ones:"
   ui_print "   https://t.me/vdcservice"
   ui_print " "
-  unzip -oqj $TMPDIR/vdcs.zip $FOL/DDC-Orig
+  mkdir -p $FOL/DDC-Orig 2>/dev/null
+  unzip -oj $TMPDIR/vdcs.zip -d $FOL/DDC-Orig >&2
   cp -f $TMPDIR/v4a.apk $FOL/v4a.apk
 
   ui_print "   After this completes,"
