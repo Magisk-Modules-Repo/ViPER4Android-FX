@@ -288,6 +288,7 @@ on_install() {
   
   # Install temporary service script
   cp -f $TMPDIR/service.sh $NVBASE/service.d/v4afx.sh
+  chmod 0755 $NVBASE/service.d/v4afx.sh
   
   # Convert old profiles to new presets
   profile_convert
