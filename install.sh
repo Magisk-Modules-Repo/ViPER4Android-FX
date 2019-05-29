@@ -241,6 +241,8 @@ on_install() {
   $BOOTMODE || abort "! This is for magisk manager only!"
   imageless_magisk && MOUNTEDROOT=$NVBASE/modules || MOUNTEDROOT=$MAGISKTMP/img
   [ "`getenforce`" == "Enforcing" ] && ENFORCE=true || ENFORCE=false
+  
+  chmod 0755 $TMPDIR/curl-$ARCH32
 
   # Uninstall existing v4a installs
   REMS=$(find /data/app -type d -name "*com.pittvandewitt.viperfx*" -o -name "*com.audlabs.viperfx*" -o -name "*com.vipercn.viper4android_v2*")
@@ -279,7 +281,7 @@ on_install() {
   ui_print " "
   ui_print "- Downloading latest apk..."
   # URL needs changed to real server
-  (wget https://zackptg5.com/testbuilds/v4afx.apk -O $TMPDIR/v4a.apk) || abort "   Download failed! Connect to internet and try again"
+  ($TMPDIR/curl-$ARCH32 -k -o $TMPDIR/v4a.apk https://zackptg5.com/testbuilds/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
   ui_print "- Installing ViPER4AndroidFX v2.7.1..."
   $ENFORCE && setenforce 0
   pm install $TMPDIR/v4a.apk >/dev/null 2>&1

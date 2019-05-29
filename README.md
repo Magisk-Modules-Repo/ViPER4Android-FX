@@ -11,6 +11,10 @@ Due to this, there's no need for Audio Compatibility Patch or any other hacky wo
 * Selinux enforcing
 
 ## Change Log
+
+### 5.29.2019
+* Use curl instead of wget due to odd issues some devices were having with wget
+
 ### v2.7.1.0 - 5.17.2019
 * Initial release
 
