@@ -281,7 +281,7 @@ on_install() {
   ui_print " "
   ui_print "- Downloading latest apk..."
   # URL needs changed to real server
-  ($TMPDIR/curl-$ARCH32 -k -o $TMPDIR/v4a.apk https://zackptg5.com/testbuilds/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
+  ($TMPDIR/curl-$ARCH32 -k -o $TMPDIR/v4a.apk https://zackptg5.com/downloads/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
   ui_print "- Installing ViPER4AndroidFX v2.7.1..."
   $ENFORCE && setenforce 0
   pm install $TMPDIR/v4a.apk >/dev/null 2>&1
