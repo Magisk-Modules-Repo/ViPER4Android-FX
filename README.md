@@ -12,6 +12,9 @@ Due to this, there's no need for Audio Compatibility Patch or any other hacky wo
 
 ## Change Log
 
+### 12.18.2019
+* Fix curl binaries
+
 ### 5.29.2019
 * Use curl instead of wget due to odd issues some devices were having with wget
 

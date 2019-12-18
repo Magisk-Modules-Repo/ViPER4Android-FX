@@ -281,10 +281,10 @@ on_install() {
   ui_print " "
   ui_print "- Downloading latest apk..."
   # URL needs changed to real server
-  ($TMPDIR/curl-$ARCH32 -k -o $TMPDIR/v4a.apk https://zackptg5.com/downloads/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
+  ($TMPDIR/curl-$ARCH32 -o $TMPDIR/v4afx.apk https://zackptg5.com/downloads/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
   ui_print "- Installing ViPER4AndroidFX v2.7.1..."
   $ENFORCE && setenforce 0
-  pm install $TMPDIR/v4a.apk >/dev/null 2>&1
+  (pm install $TMPDIR/v4afx.apk >/dev/null 2>&1) || ui_print "   V4AFX install failed! Install $FOL/v4afx.apk manually"
   $ENFORCE && setenforce 1
   
   # Install temporary service script
@@ -305,7 +305,7 @@ on_install() {
   ui_print " "
   mkdir -p $FOL/DDC-Orig 2>/dev/null
   unzip -oj $TMPDIR/vdcs.zip -d $FOL/DDC-Orig >&2
-  cp -f $TMPDIR/v4a.apk $FOL/v4a.apk
+  cp -f $TMPDIR/v4afx.apk $FOL/v4afx.apk
 
   ui_print "   After this completes,"
   ui_print "   open V4A app and follow the prompts"
