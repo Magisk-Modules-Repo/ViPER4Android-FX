@@ -11,6 +11,8 @@ Due to this, there's no need for Audio Compatibility Patch or any other hacky wo
 * Selinux enforcing
 
 ## Change Log
+### 12.30.2019
+* Update to latest magisk module template
 
 ### 12.18.2019
 * Fix curl binaries
