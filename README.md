@@ -11,6 +11,14 @@ Due to this, there's no need for Audio Compatibility Patch or any other hacky wo
 * Selinux enforcing
 
 ## Change Log
+### 3.5.2020
+* Changed to MMT-Ex
+* Updated profile converter/installer for new apk, rest of changelog is apk changelog
+* Support Magisk 20.3
+* Add feature descriptions (long press feature to display)
+* Theme updates
+* ViPER4Android now makes use of scoped storage. You'll need to copy your old presets to /android/data/com.pittvandewitt.viperfx/
+
 ### 12.30.2019
 * Update to latest magisk module template
 
