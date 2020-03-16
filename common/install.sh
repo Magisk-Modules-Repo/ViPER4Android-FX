@@ -143,13 +143,6 @@ fi
 ui_print "- Downloading latest apk..."
 # URL needs changed to real server
 (curl -o $MODPATH/v4afx.apk https://zackptg5.com/downloads/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
-ui_print "- Installing ViPER4AndroidFX v2.7.1..."
-$ENFORCE && setenforce 0
-(pm install $MODPATH/v4afx.apk >/dev/null 2>&1) || ui_print "   V4AFX install failed! Install $FOL/v4afx.apk manually"
-$ENFORCE && setenforce 1
-
-# Install temporary service script
-install_script -l $MODPATH/common/service.sh
 
 # Convert old profiles to new presets
 profile_convert
@@ -179,6 +172,14 @@ ui_print " "
 mkdir -p $FOL/DDC-Orig 2>/dev/null
 unzip -oj $MODPATH/common/vdcs.zip -d $FOL/DDC-Orig >&2
 cp -f $MODPATH/v4afx.apk $FOL/v4afx.apk
+
+ui_print "- Installing ViPER4AndroidFX v2.7.1..."
+$ENFORCE && setenforce 0
+(pm install $MODPATH/v4afx.apk >/dev/null 2>&1) || ui_print "   V4AFX install failed! Install $FOL/v4afx.apk manually"
+$ENFORCE && setenforce 1
+
+# Install temporary service script
+install_script -l $MODPATH/common/service.sh
 
 ui_print "   After this completes,"
 ui_print "   open V4A app and follow the prompts"
