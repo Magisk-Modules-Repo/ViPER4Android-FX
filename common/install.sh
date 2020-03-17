@@ -105,13 +105,14 @@ profile_convert() {
 
 [ "`getenforce`" == "Enforcing" ] && ENFORCE=true || ENFORCE=false
 FOL="/storage/emulated/0/ViPER4Android"
+[ -d "$FOL" ] || mkdir $FOL
 NEWFOL="/storage/emulated/0/Android/data/com.pittvandewitt.viperfx/files"
 BAK=false
 
 # Backup existing presets
 if [ $API -ge 29 ] && [ -d "$NEWFOL" ]; then
   ui_print "- Backing up presets"
-  cp -rf $NEWFOL $FOL
+  cp -rf $NEWFOL $FOL/
   BAK=true
 fi
 
