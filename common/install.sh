@@ -154,7 +154,7 @@ if [ $API -ge 29 ]; then
   ui_print "  $NEWFOL"
   mkdir -p $NEWFOL
   cp -rf $FOL/DDC $FOL/Kernel $FOL/Preset $NEWFOL/
-  $BAK && { ui_print "- Restoring backed up presets"; cp -rf $FOL/files $NEWFOL; }
+  $BAK && { ui_print "- Restoring backed up presets"; cp -rf $FOL/files/* $NEWFOL; rm -rf $FOL/files; }
   ui_print " "
   ui_print "   Note that all presets and other files are now in:"
   ui_print "   $NEWFOL"
