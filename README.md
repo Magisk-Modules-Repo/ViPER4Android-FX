@@ -11,7 +11,7 @@ Due to this, there's no need for Audio Compatibility Patch or any other hacky wo
 * Selinux enforcing
 
 ## Change Log
-### 3.5.2020
+### 3.17.2020
 * Changed to MMT-Ex
 * Updated profile converter/installer for new apk, rest of changelog is apk changelog
 * Support Magisk 20.3
