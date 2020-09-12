@@ -11,6 +11,9 @@ Due to this, there's no need for Audio Compatibility Patch or any other hacky wo
 * Selinux enforcing
 
 ## Change Log
+### 9.12.2020
+* Updated to MMTEx v1.6
+
 ### 3.17.2020
 * Changed to MMT-Ex
 * Updated profile converter/installer for new apk, rest of changelog is apk changelog
