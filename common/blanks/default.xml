@@ -62,4 +62,5 @@
     <string name="65540;65541;65542"></string>
     <int name="65554;65556" value="120" />
     <string name="65570;65571;65572">100;5600;40;80;50;50</string>
+    <int name="32775" value="1" />
 </map>

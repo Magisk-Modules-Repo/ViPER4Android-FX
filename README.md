@@ -11,6 +11,18 @@ Due to this, there's no need for Audio Compatibility Patch or any other hacky wo
 * Selinux enforcing
 
 ## Change Log
+### 10.16.2020
+* Updated profile converter for new preset format
+* Misc installer improvements
+* Updated V4A app to v2.7.2.1!
+  * Updated driver install to support android 11
+  * Automatically save/restore settings based on the device type/name
+  * Added preset widget
+  * Reworked presets
+  * Performance improvements
+  * Close service when no music playback is active if legacy mode is disabled
+  * Add optional crashlytics to help improving future versions
+
 ### 9.12.2020
 * Updated to MMTEx v1.6
 

@@ -1,14 +1,13 @@
-profile_convert() {
-  ui_print "- Converting old profiles to new format..."
-  [ "$(ls -A $FOL/Profile 2>/dev/null)" ] || { ui_print "- No old profiles found, nothing to convert"; return; }
-  
+convert_legacy() {
   ui_print "   Old ViPER4Android folder detected at: $FOL!"
   ui_print "   If new preset already exists, it will be skipped"
   ui_print " "
-  
-  [ "$(ls -A $FOL/Profile 2>/dev/null)" ] || { ui_print "No profiles detected!"; exit 1; }
+
   mkdir -p $FOL/Preset 2>/dev/null
   . $MODPATH/common/keys.sh
+  for i in "bt_a2dp.xml" "headset.xml" "usb_device.xml"; do
+    cp -f $MODPATH/common/blanks/default.xml $MODPATH/common/blanks/$i
+  done
 
   find $FOL/Profile -mindepth 1 -maxdepth 1 -type d 2>/dev/null | while read PROFILE; do
     ui_print "   Converting $(basename "$PROFILE")"
@@ -103,18 +102,87 @@ profile_convert() {
   done
 }
 
+convert() {
+  if [ "$1" != "-s" ]; then
+    ui_print "   Old ViPER4Android folder detected at: $FOL!"
+    ui_print "   If new preset already exists, it will be skipped"
+    ui_print " "
+  fi
+
+  find $FOL/Preset -mindepth 2 -maxdepth 2 -type f 2>/dev/null | while read PRESET; do
+    NEWPRESET="$FOL/Preset/$(basename "`dirname "$PRESET"`")-$(basename "$PRESET")"
+    [ -f "$NEWPRESET" ] && continue
+    [ "$1" != "-s" ] && ui_print "   Converting $(basename "`dirname "$PRESET"`")"
+    cp -f "$PRESET" "$NEWPRESET"
+
+    # Convert values
+    [ "$(basename "$PRESET")" == "speaker.xml" ] && sed -i '\|^</map>$|i    <int name="32775" value="2" />' "$NEWPRESET" || sed -i '\|^</map>$|i    <int name="32775" value="1" />' "$NEWPRESET"
+    local math value count
+    for key in 65587 65554 65555 65556 65558 65560 65561 65573 65576 65577 65580 65586 65588 65608 65609 65566 65605 65567 65606 65568 65607; do
+      unset math; count=0
+      value=$(sed -n "/int name=\"$key\"/p" "$NEWPRESET" | sed -r "s/.*value=\"([0-9]*)\".*/\1/")
+      [ -z $value ] && continue
+      case "$key" in
+        65587) math="($value + 100) / 2";; # Limiter - channelPan
+        65554|65555) math="($value - 120) / 10";; # FieldSurround - width, midImage
+        65556) math="($value - 200) / 75";; # FieldSurround - depth
+        65558) math="$value / 100 - 1";; # DifferentialSurround - strength
+        65560|65561|65598|65599) math="$value / 10";; # Speaker/Reverberation - roomSize, roomWidth
+        65573) math="($value - 100) / 20";; # DynamicSystem - strength
+        65576) math="$value - 15";; # ViPERBass - cutOffFrequency
+        65577) math="($value - 50) / 50";; # ViPERBass - strength
+        65580) math="$value / 50";; # ViPERClarity - strength
+        65586|65608)
+          for i in 1 5 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180 190 200; do
+            [ $value -eq $i ] && { math=$count; break; }
+            count=$((count + 1))
+          done
+          ;; # Speaker/Limiter - Output gain, Speaker/Playback gain control - Output threshold
+        65588|65609|65568|65607)
+          for i in 30 50 70 80 90 100; do
+            [ $value -eq $i ] && { math=$count; break; }
+            count=$((count + 1))
+          done
+          ;; # Speaker/Limiter - Threshold limit
+        65566|65605)
+          for i in 50 100 300; do
+            [ $value -eq $i ] && { math=$count; break; }
+            count=$((count + 1))
+          done
+          ;; # Speaker/Playback gain control - Strength
+        65567|65606)
+          for i in 100 200 300 400 500 600 700 800 900 1000 3000; do
+            [ $value -eq $i ] && { math=$count; break; }
+            count=$((count + 1))
+          done
+          ;; # Speaker/Playback gain control - Maximum gain
+      esac
+      [ "$math" ] || math=0
+      value=$(($math))
+      sed -ri "/int name=\"$key\"/ s/(value=\")[0-9]*\"/\1$value\"/" "$NEWPRESET"
+    done
+  done
+}
+
+profile_convert() {
+  ui_print "- Converting old profiles to new format..."
+  if [ "$(find $FOL/Preset -type d -mindepth 1 -maxdepth 1 2>/dev/null)" ]; then
+    convert
+  elif [ "$(ls -A $FOL/Profile 2>/dev/null)" ]; then
+    convert_legacy
+    convert -s
+  else
+     ui_print "- No old profiles found, nothing to convert"
+     return
+  fi 
+}
+
 [ "`getenforce`" == "Enforcing" ] && ENFORCE=true || ENFORCE=false
 FOL="/storage/emulated/0/ViPER4Android"
 [ -d "$FOL" ] || mkdir $FOL
 NEWFOL="/storage/emulated/0/Android/data/com.pittvandewitt.viperfx/files"
-BAK=false
-
 # Backup existing presets
-if [ $API -ge 29 ] && [ -d "$NEWFOL" ]; then
-  ui_print "- Backing up presets"
-  cp -rf $NEWFOL $FOL/
-  BAK=true
-fi
+[ -d "$NEWFOL" ] && cp -rf $NEWFOL/* $FOL/
 
 # Uninstall existing v4a installs
 ui_print "- Removing old v4a app installs..."
@@ -143,23 +211,21 @@ fi
 
 ui_print "- Downloading latest apk..."
 # URL needs changed to real server
-(curl -k -o $MODPATH/v4afx.apk https://zackptg5.com/downloads/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
+(curl -k -o $MODPATH/v4afx.apk https://zackptg5.com/downloads/v4afx-test.apk) || abort "   Download failed! Connect to internet and try again"
 
 # Convert old profiles to new presets
 profile_convert
 
 # Copy to new scoped storage directory
-if [ $API -ge 29 ]; then
-  ui_print "- Placing Files to New Directory:"
-  ui_print "  $NEWFOL"
-  mkdir -p $NEWFOL
-  cp -rf $FOL/DDC $FOL/Kernel $FOL/Preset $NEWFOL/
-  $BAK && { ui_print "- Restoring backed up presets"; cp -rf $FOL/files/* $NEWFOL; rm -rf $FOL/files; }
-  ui_print " "
-  ui_print "   Note that all presets and other files are now in:"
-  ui_print "   $NEWFOL"
-  sleep 3
-fi
+ui_print " "
+ui_print "- Placing Files to New Directory:"
+ui_print "  $NEWFOL"
+mkdir -p $NEWFOL
+cp -rf $FOL/DDC $FOL/Kernel $FOL/Preset $NEWFOL/
+ui_print " "
+ui_print "   Note that all presets and other files are now in:"
+ui_print "   $NEWFOL"
+sleep 3
 
 ui_print " "
 ui_print "- Copying original V4A vdcs to:"
@@ -174,7 +240,11 @@ mkdir -p $FOL/DDC-Orig 2>/dev/null
 unzip -oj $MODPATH/common/vdcs.zip -d $FOL/DDC-Orig >&2
 cp -f $MODPATH/v4afx.apk $FOL/v4afx.apk
 
-ui_print "- Installing ViPER4AndroidFX v2.7.1..."
+# Force driver reinstall to clear out old stuff in event of change from installed version
+umount -l $(mount | awk '{print $3}' | grep 'libv4a_fx.so')
+killall audioserver
+
+ui_print "- Installing ViPER4AndroidFX $(grep_prop version $MODPATH/module.prop)..."
 $ENFORCE && setenforce 0
 (pm install $MODPATH/v4afx.apk >/dev/null 2>&1) || ui_print "   V4AFX install failed! Install $FOL/v4afx.apk manually"
 $ENFORCE && setenforce 1
