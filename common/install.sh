@@ -76,7 +76,7 @@ convert_legacy() {
           esac
           case "$LINE" in
             fidelity_bass_mode|fidelity_clarity_mode|ddc_device|*fireq|*convolver_kernel|dynamicsystem_device)
-              VALUE="$(basename "$VALUE")"
+              VALUE="$(basename -- "$VALUE")"
               [ "$LINE" == "ddc_device" -o "$LINE" == "convolver_kernel" ] && [ "$VALUE" ] && [ $VALUE -eq $VALUE ] 2>/dev/null && VALUE="$(grep "$VALUE" $MODPATH/common/VDCIndex.txt | sed -r "s/^[0-9]*=\"(.*)\"/\1/").vdc"
               LINE="$(eval echo \$$LINE)"
               sed -i "/$LINE/ s|>.*</string>|>$VALUE</string>|" "$DEST";;
