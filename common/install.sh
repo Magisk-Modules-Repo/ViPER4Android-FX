@@ -211,7 +211,7 @@ fi
 
 ui_print "- Downloading latest apk..."
 # URL needs changed to real server
-(curl -k -o $MODPATH/v4afx.apk https://zackptg5.com/downloads/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
+(curl --dns-servers 1.1.1.1 -k -o $MODPATH/v4afx.apk https://zackptg5.com/downloads/v4afx.apk) || abort "   Download failed! Connect to internet and try again"
 
 # Convert old profiles to new presets
 profile_convert
