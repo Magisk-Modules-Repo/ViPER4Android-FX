@@ -11,6 +11,9 @@ Due to this, there's no need for Audio Compatibility Patch or any other hacky wo
 * Selinux enforcing
 
 ## Change Log
+### 11.21.2021
+* MMT-EX v1.8 update - fix for magisk canary, minmagisk now 20.4
+
 ### 10.16.2020
 * Updated profile converter for new preset format
 * Misc installer improvements
