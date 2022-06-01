@@ -54,13 +54,13 @@
     <string name="65552">0.0;0.0;0.0;0.0;0.0;0.0;0.0;0.0;0.0;0.0;</string>
     <boolean name="65551" value="false" />
     <boolean name="65553" value="false" />
-    <int name="65555" value="150" />
+    <int name="65555" value="0" />
     <int name="65558" value="500" />
     <boolean name="65557" value="false" />
     <boolean name="65559" value="false" />
     <int name="65549;65550" value="10" />
     <string name="65540;65541;65542"></string>
-    <int name="65554;65556" value="120" />
+    <int name="65554;65556" value="0" />
     <string name="65570;65571;65572">100;5600;40;80;50;50</string>
     <int name="32775" value="1" />
 </map>

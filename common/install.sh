@@ -118,14 +118,14 @@ convert() {
     # Convert values
     [ "$(basename "$PRESET")" == "speaker.xml" ] && sed -i '\|^</map>$|i    <int name="32775" value="2" />' "$NEWPRESET" || sed -i '\|^</map>$|i    <int name="32775" value="1" />' "$NEWPRESET"
     local math value count
-    for key in 65587 65554 65555 65556 65558 65560 65561 65573 65576 65577 65580 65586 65588 65608 65609 65566 65605 65567 65606 65568 65607; do
+    for key in 65587 "65554;65556" 65555 65558 65560 65561 65573 65576 65577 65580 65586 65588 65608 65609 65566 65605 65567 65606 65568 65607; do
       unset math; count=0
       value=$(sed -n "/int name=\"$key\"/p" "$NEWPRESET" | sed -r "s/.*value=\"([0-9]*)\".*/\1/")
       [ -z $value ] && continue
       case "$key" in
         65587) math="($value + 100) / 2";; # Limiter - channelPan
-        65554|65555) math="($value - 120) / 10";; # FieldSurround - width, midImage
-        65556) math="($value - 200) / 75";; # FieldSurround - depth
+        "65554;65556"|65555) math="($value - 120) / 10";; # FieldSurround - coeffs (width), midImage
+        # 65556) math="($value - 200) / 75";; # FieldSurround - depth
         65558) math="$value / 100 - 1";; # DifferentialSurround - strength
         65560|65561|65598|65599) math="$value / 10";; # Speaker/Reverberation - roomSize, roomWidth
         65573) math="($value - 100) / 20";; # DynamicSystem - strength
